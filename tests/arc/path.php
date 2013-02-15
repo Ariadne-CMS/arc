@@ -36,10 +36,10 @@
 			$this->assertTrue( $result === '/a/' );
 		}
 
-		function testWalk() {
+		function testSearch() {
 			$path = '/a/b/c/';
 			$count = 0;
-			$result = \arc\path::walk( $path, function( $parent ) use ( &$count ) {
+			$result = \arc\path::search( $path, function( $parent ) use ( &$count ) {
 				$count++;
 				if ( $parent == '/a/' ) {
 					return true;
@@ -49,7 +49,7 @@
 			$this->assertTrue( $count == 2 );
 
 			$count = 0;
-			$result = \arc\path::walk( $path, function( $parent ) use ( &$count ) {
+			$result = \arc\path::search( $path, function( $parent ) use ( &$count ) {
 				$count++;
 				if ( $parent == '/a/' ) {
 					return true;
@@ -103,8 +103,8 @@
 			$this->assertFalse( \arc\path::isChild( '/b/', '/a/' ) );
 		}
 
-		function testGetRelativePath() {
-			$this->assertTrue( \arc\path::getRelativePath( '/a/b/', '/a/' ) == 'b/' );
-			$this->assertTrue( \arc\path::getRelativePath( '/b/', '/a/' ) == '../b/' );
+		function testDiff() {
+			$this->assertTrue( \arc\path::diff( '/a/', '/a/b/' ) == 'b/' );
+			$this->assertTrue( \arc\path::diff( '/a/', '/b/' ) == '../b/' );
 		}
 	}
