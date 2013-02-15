@@ -23,26 +23,20 @@
 	 *
 	 *	@requires \arc\path
      *  @requires \arc\tree
-	 *	@suggests \arc\context
+	 *	@requires \arc\context
 	 */
-	class events extends Pluggable {
-
-		protected static $eventsTree;
+	class events {
 
 		/**
 		 *	Factory method for the static stack. Returns the shared stack only. Use new \arc\events\Stack 
 		 *	or your own factory method to create a seperate Stack instance.
 		 */
 		public static function getEventsTree() {
-			if ( !self::$eventsTree ) {
-				if ( class_exists( '\arc\context' ) ) {
-					$path = \arc\context::getContextStack()['arc.path'];
-				} else {
-					$path = '/';
-				}
-				self::$eventsTree = new events\EventsTree( \arc\tree::expand()->cd( $path ) );
+			$context = \arc\context::$context;
+			if ( !$context->arcEvents ) {
+				$context->arcEvents = new events\EventsTree( \arc\tree::expand()->cd( $context->arcPath) );
 			}
-			return self::$eventsTree;
+			return $context->arcEvents;
 		}
 
 		/**
@@ -60,8 +54,8 @@
 		 *	@param string $eventName The name of the event to listen for.
 		 *	@return IncompleteListener 
 		 */
-		public static function listen( $eventName ) {
-			return self::getEventsTree()->listen( $eventName );
+		public static function listen( $eventName, $callback ) {
+			return self::getEventsTree()->listen( $eventName, $callback );
 		}
 
 		/**
@@ -71,8 +65,8 @@
 		 *	@param string $eventName The name of the event to listen for.
 		 *	@return IncompleteListener 
 		 */
-		public static function capture( $eventName ) {
-			return self::getEventsTree()->capture( $eventName );
+		public static function capture( $eventName, $callback ) {
+			return self::getEventsTree()->capture( $eventName, $callback );
 		}
 
 		/**
